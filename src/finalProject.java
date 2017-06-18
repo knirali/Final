@@ -11,9 +11,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -34,11 +37,9 @@ public class finalProject extends JComponent {
     long desiredTime = (1000) / desiredFPS;
 
     // YOUR GAME VARIABLES WOULD GO HERE
-
     //player variable created 
-    Rectangle player = new Rectangle(20, 20, 40, 50);
+    Rectangle player = new Rectangle(10, 10, 85, 80);
 
-    //balls created 
     //player movenments 
     boolean downPressed;
     boolean upPressed;
@@ -58,16 +59,29 @@ public class finalProject extends JComponent {
     // points start at 0 
     int points = 0;
 
+    //levels start at 0 
+    int levels = 0;
+
     //font created 
     Font myFont = new Font("Arial", Font.BOLD, 75);
+    Font font1 = new Font("Arial", Font.BOLD, 40);
+    Font font2 = new Font("Arial", Font.BOLD, 60);
+    Font font3 = new Font("Arial", Font.BOLD, 150);
+
+    //Buffered Image for the imported images 
+    BufferedImage Gamebackground;
+    BufferedImage Ship;
+    BufferedImage Moon;
+    BufferedImage gameover;
+    BufferedImage name;
 
     // GAME VARIABLES END HERE   
     // Constructor to create the Frame and place the panel in
     // You will learn more about this in Grade 12 :)
-    public finalProject() {      
+    public finalProject() {
         // creates a windows to show my game
-         JFrame frame = new JFrame(title);
-      
+        JFrame frame = new JFrame(title);
+
         // sets the size of my game
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         // adds the game to the window
@@ -94,46 +108,45 @@ public class finalProject extends JComponent {
     // NOTE: This is already double buffered!(helps with framerate/speed)
     @Override
     public void paintComponent(Graphics g) {
-
         // always clear the screen first!
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         // GAME DRAWING GOES HERE
-        //backgroung created 
-        //background color is black, size 
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 800, 600);
-        //second background is blue and size
-        g.setColor(Color.BLACK);
-        g.fillRect(10, 10, 780, 580);
+        //background image drawed 
+        g.drawImage(Gamebackground, 0, 0, WIDTH, HEIGHT, null);
 
         //draw the player 
-        g.setColor(Color.blue);
-        g.fillRect(player.x, player.y, player.width, player.height);
+        g.drawImage(Ship, player.x, player.y, player.width, player.height, null);
 
         //draw the balls 
-        g.setColor(Color.WHITE);
         for (int i = 0; i < ballsY.length; i++) {
-            g.fillOval(ballsX[i], ballsY[i], 50, 50);
+            g.drawImage(Moon, ballsX[i], ballsY[i], 70, 70, null);
         }
 
-        //the display of points 
+        //the display of points and level  
+        g.setFont(font1);
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawString("Level:" + levels, 640, 35);
         g.setFont(myFont);
-        g.setColor(Color.red);
-        g.drawString("" + points, WIDTH / 2 - 10, 75);
+        g.drawString("" + points, 750, 90);
 
         //if loop created to end the game if collision occurs 
         if (gameOver) {
+            //screen cleared 
             g.clearRect(0, 0, WIDTH, HEIGHT);
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, 800, 600);
-            Font font = new Font("Arial", Font.BOLD, 90);
-            g.setFont(font);
-            g.setColor(Color.RED);
-            g.drawString("GAME OVER", WIDTH / 2 - 295, 350);
-            Font font2 = new Font("Arial", Font.BOLD, 300);
+            //background shows again at the end 
+            g.drawImage(Gamebackground, 0, 0, WIDTH, HEIGHT, null);
+            //game over image drawn 
+            g.drawImage(gameover, WIDTH / 2 - 319, 380, 600, 175, null);
+            //final points displayed  
+            g.setFont(font3);
             g.setColor(Color.WHITE);
-            g.drawString("" + points, WIDTH / 2 - 50, 200);          
+            g.drawString("" + points, WIDTH / 2 - 50, 330);
+            //final level displayed 
+            g.setFont(font2);
+            g.drawString("Level: " + levels, WIDTH / 2 - 140, 390);
+            g.drawImage(name, WIDTH / 2 - 330, 50, 600, 150, null);
+
         }
         // GAME DRAWING ENDS HERE
     }
@@ -142,6 +155,12 @@ public class finalProject extends JComponent {
     // This is run before the game loop begins!
     public void preSetup() {
         // Any of your pre setup before the loop starts should go here
+        //images loaded in from pictures 
+        Gamebackground = loadImage("pictures/space.png");
+        Ship = loadImage("pictures/ufo.png");
+        Moon = loadImage("pictures/moon1.png");
+        gameover = loadImage("pictures/gameover.png");
+        name = loadImage("pictures/name.png");
 
         //for loop created to go make a set of balls that are located outside of the screen 
         for (int i = 0; i < ballsX.length; i++) {
@@ -195,6 +214,7 @@ public class finalProject extends JComponent {
             }
             //if collisions occurs, a game over sign pops up 
             if (checkCollisions()) {
+                //ig game over is true the screen appears 
                 gameOver = true;
                 repaint();
                 try {
@@ -229,19 +249,20 @@ public class finalProject extends JComponent {
 
     //new method created to enter in a new set of balls 
     private void newBallz() {
+        //balls positions
         ballsY[0] = 0;
         ballsX[0] = 0;
         for (int i = 1; i < ballsY.length; i++) {
             ballsY[i - 1] = ballsY[i];
             ballsX[i - 1] = ballsX[i];
         }
-
         ballsY[12] = yPosition();
         ballsX[12] = 780;
         //everytime the ball passes the last position the points go up by 1 
         points++;
         //every 10 points the speed increases by 1 
         ballzSpeed = (int) (1 + Math.floor(points / 10));
+        levels = (int) (1 + Math.floor(points / 10));
     }
 
     //method created to place the balls in y position 
@@ -300,10 +321,10 @@ public class finalProject extends JComponent {
         //for loop was created 
         for (int i = 0; i < 2; i++) {
             //if loop created to determine is the ball is in the area of player 
-            if (ballsX[i] <= player.x + player.width && ballsX[i] > player.x) {
+            if (ballsX[i] <= player.x + player.width - 1 && ballsX[i] > player.x) {
                 //if the ball is in the same area (share the same pixals) collision is ture
                 for (int k = ballsY[i]; k < ballsY[i] + 50; k++) {
-                    if (k >= player.y && k <= player.y + player.height) {
+                    if (k >= player.y && k <= player.y + player.height - 20) {
                         collide = true;
                     }
                 }
@@ -348,23 +369,28 @@ public class finalProject extends JComponent {
         // if a key has been pressed down
         @Override
         public void keyPressed(KeyEvent e) {
+            //if the down kwy is pressed then the player moves down 
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 downPressed = true;
             }
+            //if the up key is pressed then the player moves up 
             if (e.getKeyCode() == KeyEvent.VK_UP) {
                 upPressed = true;
             }
+
         }
 
         // if a key has been released
         @Override
         public void keyReleased(KeyEvent e) {
+            //if the down pressed variable is false then the player doesnt move 
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 downPressed = false;
             }
+            //if the upPressed variable is false then the player doesnt move
             if (e.getKeyCode() == KeyEvent.VK_UP) {
                 upPressed = false;
-            }      
+            }
         }
     }
 
@@ -377,5 +403,20 @@ public class finalProject extends JComponent {
 
         // starts the game loop
         game.run();
+    }
+
+    //mehtod created to import images from a folder called pcitures 
+    public BufferedImage loadImage(String filename) {
+        BufferedImage img = null;
+        try {
+            // use ImageIO to load in an Image
+            // ClassLoader is used to go into a folder in the directory and grab the file
+            img = ImageIO.read(ClassLoader.getSystemResourceAsStream(filename));
+        } catch (IOException ex) {
+            System.out.println("Error Loading Image");
+            throw new RuntimeException(ex);
+        }
+        //image is returned 
+        return img;
     }
 }
