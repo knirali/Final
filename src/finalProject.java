@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
- *
+ * 
  * @author niralikantaria
  */
 public class finalProject extends JComponent {
