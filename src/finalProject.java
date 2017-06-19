@@ -29,7 +29,7 @@ public class finalProject extends JComponent {
     static final int HEIGHT = 600;
 
     //Title of the window
-    String title = "My Game";
+    String title = "SPACE";
 
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
@@ -126,9 +126,9 @@ public class finalProject extends JComponent {
         //the display of points and level  
         g.setFont(font1);
         g.setColor(Color.LIGHT_GRAY);
-        g.drawString("Level:" + levels, 640, 35);
+        g.drawString("Level:" + levels, 645, 35);
         g.setFont(myFont);
-        g.drawString("" + points, 750, 90);
+        g.drawString("" + points, 710, 100);
 
         //if loop created to end the game if collision occurs 
         if (gameOver) {
@@ -141,7 +141,7 @@ public class finalProject extends JComponent {
             //final points displayed  
             g.setFont(font3);
             g.setColor(Color.WHITE);
-            g.drawString("" + points, WIDTH / 2 - 50, 330);
+            g.drawString("" + points, WIDTH / 2 - 85, 330);
             //final level displayed 
             g.setFont(font2);
             g.drawString("Level: " + levels, WIDTH / 2 - 140, 390);
