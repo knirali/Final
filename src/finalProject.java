@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
- * 
+ *
  * @author niralikantaria
  */
 public class finalProject extends JComponent {
@@ -272,6 +272,7 @@ public class finalProject extends JComponent {
         Random rand = new Random();
         //placing a ball randomly on the whole screen 
         switch (rand.nextInt(11) + 1) {
+          //each case is explained 
             case 1:
                 yPos = 30;
                 break;
